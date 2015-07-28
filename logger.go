@@ -59,7 +59,7 @@ func NewLogger(applicationName string) *Logger {
 NewLoggerWithMinimumLevel creates a new Logger instance that only logs
 messages with a specified log type level or higher.
 */
-func newLoggerWithMinimumLevel(applicationName string, logLevel LogType) *Logger {
+func NewLoggerWithMinimumLevel(applicationName string, logLevel LogType) *Logger {
 	return &Logger{
 		ApplicationName: applicationName,
 		LogLevel:        logLevel,
