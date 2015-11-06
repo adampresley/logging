@@ -22,10 +22,24 @@ func (logger *Logger) Debug(message ...interface{}) {
 }
 
 /*
+Debugf writes a formatted debug entry to the log
+*/
+func (logger *Logger) Debugf(message string, args ...interface{}) {
+	logger.writeLogf(DEBUG, message, args...)
+}
+
+/*
 Error writes an error message to the log
 */
 func (logger *Logger) Error(message ...interface{}) {
 	logger.writeLog(ERROR, message)
+}
+
+/*
+Errorf writes a formatted error entry to the log
+*/
+func (logger *Logger) Errorf(message string, args ...interface{}) {
+	logger.writeLogf(ERROR, message, args...)
 }
 
 /*
@@ -36,10 +50,24 @@ func (logger *Logger) Fatal(message ...interface{}) {
 }
 
 /*
+Fatalf writes a formatted fatal entry to the log
+*/
+func (logger *Logger) Fatalf(message string, args ...interface{}) {
+	logger.writeLogf(FATAL, message, args...)
+}
+
+/*
 Info writes an information message to the log
 */
 func (logger *Logger) Info(message ...interface{}) {
 	logger.writeLog(INFO, message)
+}
+
+/*
+Infof writes a formatted info entry to the log
+*/
+func (logger *Logger) Infof(message string, args ...interface{}) {
+	logger.writeLogf(INFO, message, args...)
 }
 
 /*
@@ -75,6 +103,13 @@ func (logger *Logger) Warning(message ...interface{}) {
 	logger.writeLog(WARN, message)
 }
 
+/*
+Warningf writes a formatted warning entry to the log
+*/
+func (logger *Logger) Warningf(message string, args ...interface{}) {
+	logger.writeLogf(WARN, message, args...)
+}
+
 func (logger *Logger) writeLog(logType LogType, message ...interface{}) {
 	logLevelInt := int(logType)
 
@@ -84,5 +119,14 @@ func (logger *Logger) writeLog(logType LogType, message ...interface{}) {
 		for _, item := range message {
 			log.Print(item)
 		}
+	}
+}
+
+func (logger *Logger) writeLogf(logType LogType, message string, args ...interface{}) {
+	logLevelInt := int(logType)
+
+	if logLevelInt >= logger.logLevelInt {
+		log.SetPrefix(logger.ApplicationName + ": " + logType.String() + " - ")
+		log.Printf(message+"\n", args...)
 	}
 }
