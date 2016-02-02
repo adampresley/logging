@@ -2,6 +2,8 @@ package logging
 
 import (
 	"log"
+
+	"github.com/fatih/color"
 )
 
 /*
@@ -11,7 +13,8 @@ type Logger struct {
 	ApplicationName string
 	LogLevel        LogType
 
-	logLevelInt int
+	colorEnabled bool
+	logLevelInt  int
 }
 
 /*
@@ -26,6 +29,20 @@ Debugf writes a formatted debug entry to the log
 */
 func (logger *Logger) Debugf(message string, args ...interface{}) {
 	logger.writeLogf(DEBUG, message, args...)
+}
+
+/*
+DiableColors turns of console coloring
+*/
+func (logger *Logger) DisableColors() {
+	logger.colorEnabled = false
+}
+
+/*
+EnableColors turns on console coloring
+*/
+func (logger *Logger) EnableColors() {
+	logger.colorEnabled = true
 }
 
 /*
@@ -79,7 +96,8 @@ func NewLogger(applicationName string) *Logger {
 		ApplicationName: applicationName,
 		LogLevel:        DEBUG,
 
-		logLevelInt: int(DEBUG),
+		colorEnabled: false,
+		logLevelInt:  int(DEBUG),
 	}
 }
 
@@ -92,7 +110,8 @@ func NewLoggerWithMinimumLevel(applicationName string, logLevel LogType) *Logger
 		ApplicationName: applicationName,
 		LogLevel:        logLevel,
 
-		logLevelInt: int(logLevel),
+		colorEnabled: false,
+		logLevelInt:  int(logLevel),
 	}
 }
 
@@ -113,6 +132,12 @@ func (logger *Logger) Warningf(message string, args ...interface{}) {
 func (logger *Logger) writeLog(logType LogType, message ...interface{}) {
 	logLevelInt := int(logType)
 
+	logColor := logType.Color()
+
+	if logger.colorEnabled {
+		color.Set(logColor)
+	}
+
 	if logLevelInt >= logger.logLevelInt {
 		log.SetPrefix(logger.ApplicationName + ": " + logType.String() + " - ")
 
@@ -120,13 +145,26 @@ func (logger *Logger) writeLog(logType LogType, message ...interface{}) {
 			log.Print(item)
 		}
 	}
+
+	if logger.colorEnabled {
+		color.Unset()
+	}
 }
 
 func (logger *Logger) writeLogf(logType LogType, message string, args ...interface{}) {
 	logLevelInt := int(logType)
+	logColor := logType.Color()
+
+	if logger.colorEnabled {
+		color.Set(logColor)
+	}
 
 	if logLevelInt >= logger.logLevelInt {
 		log.SetPrefix(logger.ApplicationName + ": " + logType.String() + " - ")
 		log.Printf(message+"\n", args...)
+	}
+
+	if logger.colorEnabled {
+		color.Unset()
 	}
 }

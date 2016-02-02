@@ -1,6 +1,10 @@
 package logging
 
-import "strings"
+import (
+	"strings"
+
+	"github.com/fatih/color"
+)
 
 /*
 LogType represents a type and level of logging
@@ -26,6 +30,21 @@ var logTypeNames = map[LogType]string{
 	WARN:  "WARNING",
 	ERROR: "ERROR",
 	FATAL: "FATAL",
+}
+
+var logTypeColors = map[LogType]color.Attribute{
+	DEBUG: color.FgGreen,
+	INFO:  color.FgWhite,
+	WARN:  color.FgYellow,
+	ERROR: color.FgRed,
+	FATAL: color.FgRed,
+}
+
+/*
+Color returns the color attribute for this log type
+*/
+func (logType LogType) Color() color.Attribute {
+	return logTypeColors[logType]
 }
 
 /*
